@@ -41,8 +41,21 @@
     <text x="32" y="512"><tspan fill="#475569">pre-rollback state saved as safety checkpoint 91ab77fe00d1</tspan></text>
 
     <text x="32" y="564"><tspan fill="#8b5cf6">$ </tspan><tspan fill="#f8fafc">avc timeline</tspan></text>
-    <text x="32" y="590"><tspan fill="#fdba74">* b1326b75d1ff</tspan><tspan fill="#8b93a7">  [</tspan><tspan fill="#c4b5fd">attempt-a</tspan><tspan fill="#8b93a7">]  2m ago  </tspan><tspan fill="#cbd5e1">retry with redis lock</tspan></text>
-    <text x="32" y="616"><tspan fill="#fdba74">* 408350f14bfa</tspan><tspan fill="#8b93a7">  [</tspan><tspan fill="#7cb8ff">main</tspan><tspan fill="#8b93a7">]       4m ago  </tspan><tspan fill="#cbd5e1">auto: safety checkpoint</tspan></text>
-    <text x="32" y="642"><tspan fill="#fdba74">* 3dc674401e09</tspan><tspan fill="#8b93a7">  [</tspan><tspan fill="#7cb8ff">main</tspan><tspan fill="#8b93a7">]       9m ago  </tspan><tspan fill="#cbd5e1">auth working, pre-refactor</tspan></text>
+    <g font-size="15">
+      <text x="32" y="590" fill="#fdba74">* b1326b75d1ff</text>
+      <text x="190" y="590" fill="#c4b5fd">[attempt-a]</text>
+      <text x="322" y="590" fill="#8b93a7">2m ago</text>
+      <text x="410" y="590" fill="#cbd5e1">retry with redis lock</text>
+
+      <text x="32" y="616" fill="#fdba74">* 408350f14bfa</text>
+      <text x="190" y="616" fill="#7cb8ff">[main]</text>
+      <text x="322" y="616" fill="#8b93a7">4m ago</text>
+      <text x="410" y="616" fill="#cbd5e1">auto: safety checkpoint</text>
+
+      <text x="32" y="642" fill="#fdba74">* 3dc674401e09</text>
+      <text x="190" y="642" fill="#7cb8ff">[main]</text>
+      <text x="322" y="642" fill="#8b93a7">9m ago</text>
+      <text x="410" y="642" fill="#cbd5e1">auth working, pre-refactor</text>
+    </g>
   </g>
 </svg>
