@@ -1,6 +1,6 @@
 {
   "name": "agentvc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Version control for AI agent sessions — checkpoint, branch, diff and roll back agent work mid-task.",
   "license": "MIT",
   "author": "agentvc contributors",
