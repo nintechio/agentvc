@@ -5,6 +5,8 @@ import { Refs } from "./refs.js";
 import { scanWorkspace } from "./snapshot.js";
 import { diffTrees } from "./diff.js";
 import type { FileDiff } from "./diff.js";
+import { computePatch } from "./patch.js";
+import type { FilePatch, PatchOptions } from "./patch.js";
 import { sha256 } from "../util/hash.js";
 import type { Checkpoint, Index, IndexEntry, Tree } from "./types.js";
 
@@ -48,6 +50,11 @@ export interface RestoreResult {
 }
 
 export class AvcError extends Error {}
+
+interface DiffSide {
+  tree: Tree;
+  read: (rel: string) => Promise<Buffer>;
+}
 
 export class AgentVCS {
   private readonly objects: ObjectStore;
@@ -226,6 +233,19 @@ export class AgentVCS {
     return diffTrees(await this.treeForRef(fromRef), await this.treeForRef(toRef));
   }
 
+  async diffPatch(fromRef = "HEAD", toRef = "work", options: PatchOptions = {}): Promise<FilePatch[]> {
+    await this.requireInit();
+    const from = await this.sideForRef(fromRef);
+    const to = await this.sideForRef(toRef);
+    const patches: FilePatch[] = [];
+    for (const d of diffTrees(from.tree, to.tree)) {
+      const oldData = d.status === "added" ? null : await from.read(d.path);
+      const newData = d.status === "deleted" ? null : await to.read(d.path);
+      patches.push(computePatch(d.path, d.status, oldData, newData, options));
+    }
+    return patches;
+  }
+
   async timeline(limitPerBranch = 1000): Promise<TimelineEntry[]> {
     await this.requireInit();
     const branches = await this.refs.listBranches();
@@ -286,12 +306,40 @@ export class AgentVCS {
   }
 
   private async workTree(): Promise<Tree> {
+    return (await this.workSide()).tree;
+  }
+
+  private async workSide(): Promise<DiffSide> {
     const files = await scanWorkspace(this.root);
     const tree: Tree = {};
     for (const [rel, data] of files) {
       tree[rel] = { hash: sha256(data), size: data.length };
     }
-    return tree;
+    return {
+      tree,
+      read: async (rel) => {
+        const data = files.get(rel);
+        if (!data) throw new AvcError(`'${rel}' vanished from the working tree during diff`);
+        return data;
+      },
+    };
+  }
+
+  private async checkpointSide(id: string): Promise<DiffSide> {
+    const tree = await this.treeOfCheckpoint(id);
+    return {
+      tree,
+      read: async (rel) => {
+        const entry = tree[rel];
+        if (!entry) throw new AvcError(`'${rel}' is not in checkpoint ${id}`);
+        return this.objects.read(entry.hash);
+      },
+    };
+  }
+
+  private async sideForRef(ref: string): Promise<DiffSide> {
+    if (ref === "work") return this.workSide();
+    return this.checkpointSide(await this.resolveRef(ref));
   }
 
   private async treeOfCheckpoint(id: string): Promise<Tree> {

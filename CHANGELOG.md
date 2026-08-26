@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Line-level diffs** — `avc diff -p` (with `-U <n>` for context) prints
+  unified diffs per changed file, coloured in the terminal and pipeable into
+  `patch -p1` / `git apply`. Added and deleted files use `/dev/null` headers,
+  and a missing trailing newline is marked the way `diff` does.
+- `avc_diff` MCP tool accepts `patch: true` (and optional `context`) so agents
+  can inspect exactly which lines changed before deciding to roll back; very
+  large outputs are truncated per file with a note.
+- Library: `AgentVCS.diffPatch()`, `computePatch()`, `diffLines()`,
+  `formatPatch()`, `formatPatchSummary()` and the `FilePatch` / `Hunk` types.
+  The engine trims common prefix/suffix then runs Myers' O(ND) diff; binary
+  files, files over 2 MB / 50k lines, and rewrites beyond a 2,000-edit cap
+  degrade gracefully (`limit` field) instead of blowing up.
+
 ## [0.1.0] - 2026-08-26
 
 Initial public release.

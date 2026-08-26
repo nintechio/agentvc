@@ -44,7 +44,7 @@ Git was built for humans committing at human pace. AI agents mutate your workspa
 | **↩ Lossless rollback** | Every restore auto-saves your current state first. Rolling back is itself reversible. |
 | **⑃ Parallel attempts** | Branch the session, try approach B, compare, keep the winner. |
 | **🤖 MCP-native** | 8 tools so Claude Code, Cursor, and Codex checkpoint and recover *themselves*. |
-| **🔍 Real diffs** | See exactly what the agent touched between any two points in time. |
+| **🔍 Real diffs** | See exactly what the agent touched between any two points in time — down to the line with `avc diff -p`. |
 | **🔒 Local & private** | Everything lives in `.avc/`. No daemon, no cloud, no telemetry. |
 
 ## Why not just git?
@@ -87,6 +87,7 @@ avc save -m "known good state"        # checkpoint everything
 
 echo "v2" > app.txt                   # ...agent goes wrong...
 avc status                            # see what changed
+avc diff -p                           # see exactly which lines changed
 avc rollback HEAD                     # instant undo — nothing lost
 
 avc branch plan-b && avc switch plan-b   # fork a parallel attempt
@@ -141,7 +142,7 @@ Drop this into your `AGENTS.md` / `CLAUDE.md` — it's the difference between a 
 | `avc_branch` | Fork a parallel attempt without losing the current one |
 | `avc_switch` | Move between attempts (auto-saves unsaved work first) |
 | `avc_rollback` | Restore all files to a known-good checkpoint |
-| `avc_diff` | Compare any two points in time |
+| `avc_diff` | Compare any two points in time, optionally with line-level patches (`patch: true`) |
 | `avc_timeline` | See every attempt across all branches |
 
 ## CLI reference
@@ -156,15 +157,21 @@ Drop this into your `AGENTS.md` / `CLAUDE.md` — it's the difference between a 
 | `avc switch <branch>` | Switch branches, restoring files |
 | `avc rollback [ref]` | Restore files to a checkpoint (default `HEAD`) |
 | `avc diff [from] [to]` | Compare refs, or a ref against the working tree |
+| `avc diff -p [-U n] [from] [to]` | Same, as a unified diff with `n` lines of context (default 3) |
 | `avc timeline` | Every checkpoint across every branch |
 | `avc mcp` | Start the MCP stdio server |
 
 Refs accept `HEAD`, a branch name, a full checkpoint id, or any unique id prefix.
 
+`avc diff -p` prints standard unified diffs (`--- a/path`, `+++ b/path`, `@@` hunks), so the
+output pipes straight into `patch -p1` or `git apply`. Binary files are reported as
+`Binary files … differ`; files over 2 MB / 50,000 lines are listed without contents, and
+rewrites too large for an exact line diff are shown as a whole-file replacement.
+
 ## Use it as a library
 
 ```ts
-import { AgentVCS } from "agentvc";
+import { AgentVCS, formatPatch } from "agentvc";
 
 const avc = new AgentVCS(projectRoot);
 await avc.ensureInit();
@@ -181,9 +188,13 @@ await avc.branch("plan-b");
 await avc.checkout("plan-b");
 
 await avc.rollback(cp.id);   // instant, lossless
+
+for (const p of await avc.diffPatch(cp.id, "work")) {
+  console.log(formatPatch(p));   // unified diff per file, with hunks available on p.hunks
+}
 ```
 
-Fully typed. `AgentVCS`, `diffTrees`, and all result types are exported.
+Fully typed. `AgentVCS`, `diffTrees`, `computePatch`, `formatPatch`, and all result types are exported.
 
 ## How it works
 
@@ -211,7 +222,7 @@ Content-addressed storage, git's good idea without git's ceremony:
 
 ## Roadmap
 
-- [ ] Line-level diffs in the terminal (`avc diff -p`)
+- [x] Line-level diffs in the terminal (`avc diff -p`)
 - [ ] Branch merging (fast-forward today, 3-way next)
 - [ ] Auto-save hooks: on file watcher, or after each agent turn
 - [ ] Multi-agent coordination — two agents, one repo, separate branches
