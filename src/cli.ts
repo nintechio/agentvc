@@ -3,6 +3,7 @@ import { Command } from "commander";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { AgentVCS, AvcError } from "./core/repo.js";
+import { packageVersion } from "./util/version.js";
 import type { FileDiff } from "./core/diff.js";
 import {
   formatHunkHeader,
@@ -13,7 +14,7 @@ import {
 } from "./core/patch.js";
 import type { FilePatch } from "./core/patch.js";
 
-const VERSION = "0.1.0";
+const VERSION = packageVersion();
 const COLORS = process.stdout.isTTY && !process.env.NO_COLOR;
 
 function paint(code: string, s: string | number): string {

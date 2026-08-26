@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   files, files over 2 MB / 50k lines, and rewrites beyond a 2,000-edit cap
   degrade gracefully (`limit` field) instead of blowing up.
 
+### Fixed
+
+- `avc --version` and the MCP server banner now read the version from
+  `package.json` instead of a hardcoded string, so `npm version` bumps are
+  reflected everywhere.
+
 ## [0.1.0] - 2026-08-26
 
 Initial public release.
