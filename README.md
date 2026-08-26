@@ -44,6 +44,7 @@ Git was built for humans committing at human pace. AI agents mutate your workspa
 | **↩ Lossless rollback** | Every restore auto-saves your current state first. Rolling back is itself reversible. |
 | **⑃ Parallel attempts** | Branch the session, try approach B, compare, keep the winner. |
 | **🤖 MCP-native** | 8 tools so Claude Code, Cursor, and Codex checkpoint and recover *themselves*. |
+| **⚡ Auto-save** | `avc watch` checkpoints whenever files go quiet; `avc hook claude` checkpoints after every agent turn. |
 | **🔍 Real diffs** | See exactly what the agent touched between any two points in time — down to the line with `avc diff -p`. |
 | **🔒 Local & private** | Everything lives in `.avc/`. No daemon, no cloud, no telemetry. |
 
@@ -117,9 +118,25 @@ claude mcp add agentvc -- avc mcp
 
 Set `AVC_ROOT=/path/to/project` if the server shouldn't use its working directory.
 
+### Checkpoint automatically
+
+You don't have to rely on the agent remembering. Pick one (or both):
+
+```bash
+avc hook claude --install      # Claude Code: checkpoint after every agent turn
+avc hook claude --install --on-edit   # ...and after every Edit/Write tool call
+avc watch                      # any agent: checkpoint whenever files stop changing for 2s
+```
+
+`avc hook claude` merges a `Stop` hook running `avc save --auto` into `.claude/settings.json`
+(re-running it is a no-op). `avc save --auto` only writes a checkpoint when something actually
+changed, so history never fills with duplicates; `avc log --no-auto` hides automatic entries.
+Other agents can call the same command from their own hook or post-turn script.
+
 ### Teach it when to checkpoint
 
-Drop this into your `AGENTS.md` / `CLAUDE.md` — it's the difference between a nice tool and a genuine safety net:
+Even with hooks on, a short note in your `AGENTS.md` / `CLAUDE.md` makes checkpoints meaningful
+rather than merely frequent:
 
 ```markdown
 ## Session checkpoints (agentvc)
@@ -136,7 +153,7 @@ Drop this into your `AGENTS.md` / `CLAUDE.md` — it's the difference between a 
 
 | Tool | What the agent uses it for |
 |---|---|
-| `avc_save` | Snapshot the workspace before risky work or after success |
+| `avc_save` | Snapshot the workspace before risky work or after success (`only_if_changed` skips duplicates) |
 | `avc_status` | Check what's changed since the last checkpoint |
 | `avc_log` | Review recent checkpoints on the current branch |
 | `avc_branch` | Fork a parallel attempt without losing the current one |
@@ -151,8 +168,11 @@ Drop this into your `AGENTS.md` / `CLAUDE.md` — it's the difference between a 
 |---|---|
 | `avc init` | Initialise a repository in the current directory |
 | `avc save [-m msg] [--meta json]` | Checkpoint the whole workspace |
+| `avc save --auto` | Checkpoint only if something changed, tagged as automatic (for hooks) |
+| `avc watch [-d ms]` | Keep running; auto-checkpoint after files stop changing |
+| `avc hook claude [--install] [--on-edit]` | Print or install Claude Code hooks that run `avc save --auto` |
 | `avc status` | Show unsaved changes since the last checkpoint |
-| `avc log [-n N]` | List checkpoints on the current branch |
+| `avc log [-n N] [--no-auto]` | List checkpoints on the current branch |
 | `avc branch [name] [start]` | Create or list branches |
 | `avc switch <branch>` | Switch branches, restoring files |
 | `avc rollback [ref]` | Restore files to a checkpoint (default `HEAD`) |
@@ -194,7 +214,7 @@ for (const p of await avc.diffPatch(cp.id, "work")) {
 }
 ```
 
-Fully typed. `AgentVCS`, `diffTrees`, `computePatch`, `formatPatch`, and all result types are exported.
+Fully typed. `AgentVCS`, `watchWorkspace`, `diffTrees`, `computePatch`, `formatPatch`, and all result types are exported.
 
 ## How it works
 
@@ -224,7 +244,7 @@ Content-addressed storage, git's good idea without git's ceremony:
 
 - [x] Line-level diffs in the terminal (`avc diff -p`)
 - [ ] Branch merging (fast-forward today, 3-way next)
-- [ ] Auto-save hooks: on file watcher, or after each agent turn
+- [x] Auto-save hooks: on file watcher, or after each agent turn
 - [ ] Multi-agent coordination — two agents, one repo, separate branches
 - [ ] Named milestones and session tags
 - [ ] Python SDK with MCP parity

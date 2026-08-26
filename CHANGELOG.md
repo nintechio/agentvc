@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Auto-save** — `avc watch` keeps running and checkpoints whenever the
+  workspace has been quiet for a debounce window (default 2 s), coalescing
+  bursts of edits and respecting ignore rules; Ctrl-C saves any pending work.
+- `avc save --auto` checkpoints only when something changed and tags the
+  checkpoint `meta.auto = true`, `meta.trigger = "hook"` — the building block
+  for post-turn hooks in any agent.
+- `avc hook claude [--install] [--on-edit]` prints or idempotently merges
+  Claude Code `Stop` (and optionally `PostToolUse`) hooks into
+  `.claude/settings.json` so every agent turn ends with a checkpoint.
+- `avc log --no-auto` hides automatic checkpoints.
+- `avc_save` MCP tool accepts `only_if_changed` so agents can checkpoint
+  routinely without creating duplicates.
+- Library: `AgentVCS.saveIfDirty()`, `watchWorkspace()`,
+  `claudeHookSettings()`, `mergeHookSettings()`.
+
+### Changed
+
+- Safety checkpoints now carry `meta.trigger = "safety"` alongside
+  `meta.auto = true`.
+
 ## [0.2.0] - 2026-08-26
 
 ### Added

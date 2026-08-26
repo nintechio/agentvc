@@ -127,6 +127,12 @@ export class AgentVCS {
     return cp;
   }
 
+  async saveIfDirty(opts: SaveOptions): Promise<Checkpoint | null> {
+    const st = await this.status();
+    if (st.clean) return null;
+    return this.save(opts);
+  }
+
   async readCheckpoint(id: string): Promise<Checkpoint> {
     try {
       const raw = await fs.readFile(this.checkpointPath(id), "utf8");
@@ -354,9 +360,7 @@ export class AgentVCS {
   }
 
   private async autoSafetyCheckpoint(reason: string): Promise<Checkpoint | null> {
-    const st = await this.status();
-    if (st.clean) return null;
-    return this.save({ message: reason, meta: { auto: true } });
+    return this.saveIfDirty({ message: reason, meta: { auto: true, trigger: "safety" } });
   }
 
   private async restoreTree(tree: Tree): Promise<{ restored: number; deleted: number }> {
