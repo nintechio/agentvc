@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 664" width="1100" height="664" role="img" aria-label="agentvc terminal demo">
+  <title>agentvc in action</title>
+  <defs>
+    <linearGradient id="titlebar" x1="0" y1="0" x2="1100" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#141320"/>
+      <stop offset="1" stop-color="#0d0c14"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1100" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa" stop-opacity="0.55"/>
+      <stop offset="0.5" stop-color="#8b5cf6" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#f97316" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="1099" height="663" rx="14" fill="#08070d" stroke="url(#edge)"/>
+  <path d="M0 14.5 A14 14 0 0 1 14.5 0.5 H1085.5 A14 14 0 0 1 1099.5 14.5 V52 H0.5 Z" fill="url(#titlebar)"/>
+  <line x1="0" y1="52" x2="1100" y2="52" stroke="#ffffff" stroke-opacity="0.07"/>
+  <circle cx="28" cy="26" r="6" fill="#f87171"/>
+  <circle cx="50" cy="26" r="6" fill="#fbbf24"/>
+  <circle cx="72" cy="26" r="6" fill="#34d399"/>
+  <text x="550" y="31" text-anchor="middle" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace"
+        font-size="13" fill="#8b93a7" letter-spacing="0.6">avc — ~/projects/api</text>
+
+  <g xml:space="preserve" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15">
+    <text x="32" y="96"><tspan fill="#8b5cf6">$ </tspan><tspan fill="#f8fafc">avc init</tspan></text>
+    <text x="32" y="122"><tspan fill="#34d399">Initialized</tspan><tspan fill="#8b93a7"> empty repository in ./.avc</tspan></text>
+
+    <text x="32" y="174"><tspan fill="#8b5cf6">$ </tspan><tspan fill="#f8fafc">avc save -m "auth working, pre-refactor"</tspan></text>
+    <text x="32" y="200"><tspan fill="#34d399">Saved</tspan><tspan fill="#fdba74"> 3dc674401e09</tspan><tspan fill="#8b93a7"> on </tspan><tspan fill="#7cb8ff">main</tspan><tspan fill="#8b93a7"> (14 files tracked)</tspan></text>
+
+    <text x="32" y="252"><tspan fill="#8b5cf6">$ </tspan><tspan fill="#475569"># ...agent refactors 12 files and breaks the build...</tspan></text>
+
+    <text x="32" y="304"><tspan fill="#8b5cf6">$ </tspan><tspan fill="#f8fafc">avc status</tspan></text>
+    <text x="32" y="330"><tspan fill="#8b93a7">On branch </tspan><tspan fill="#7cb8ff">main</tspan><tspan fill="#475569"> @ 3dc674401e09</tspan></text>
+    <text x="32" y="356"><tspan fill="#fbbf24"> M </tspan><tspan fill="#cbd5e1">src/auth.ts</tspan></text>
+    <text x="32" y="382"><tspan fill="#f87171"> D </tspan><tspan fill="#cbd5e1">src/session.ts</tspan></text>
+    <text x="32" y="408"><tspan fill="#34d399"> A </tspan><tspan fill="#cbd5e1">src/auth-v2.ts</tspan></text>
+
+    <text x="32" y="460"><tspan fill="#8b5cf6">$ </tspan><tspan fill="#f8fafc">avc rollback HEAD</tspan></text>
+    <text x="32" y="486"><tspan fill="#34d399">Rolled back</tspan><tspan fill="#8b93a7"> to </tspan><tspan fill="#fdba74">3dc674401e09</tspan><tspan fill="#8b93a7"> (12 restored, 3 removed)</tspan></text>
+    <text x="32" y="512"><tspan fill="#475569">pre-rollback state saved as safety checkpoint 91ab77fe00d1</tspan></text>
+
+    <text x="32" y="564"><tspan fill="#8b5cf6">$ </tspan><tspan fill="#f8fafc">avc timeline</tspan></text>
+    <text x="32" y="590"><tspan fill="#fdba74">* b1326b75d1ff</tspan><tspan fill="#8b93a7">  [</tspan><tspan fill="#c4b5fd">attempt-a</tspan><tspan fill="#8b93a7">]  2m ago  </tspan><tspan fill="#cbd5e1">retry with redis lock</tspan></text>
+    <text x="32" y="616"><tspan fill="#fdba74">* 408350f14bfa</tspan><tspan fill="#8b93a7">  [</tspan><tspan fill="#7cb8ff">main</tspan><tspan fill="#8b93a7">]       4m ago  </tspan><tspan fill="#cbd5e1">auto: safety checkpoint</tspan></text>
+    <text x="32" y="642"><tspan fill="#fdba74">* 3dc674401e09</tspan><tspan fill="#8b93a7">  [</tspan><tspan fill="#7cb8ff">main</tspan><tspan fill="#8b93a7">]       9m ago  </tspan><tspan fill="#cbd5e1">auth working, pre-refactor</tspan></text>
+  </g>
+</svg>

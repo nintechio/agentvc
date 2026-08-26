@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" width="1200" height="480" role="img" aria-label="agentvc architecture">
+  <title>agentvc architecture</title>
+  <defs>
+    <linearGradient id="accent" x1="0" y1="0" x2="1200" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="0.5" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowBack" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 9 1 L 0 5 L 9 9 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="480" rx="16" fill="#060509"/>
+  <rect x="0" y="0" width="1200" height="3" fill="url(#accent)"/>
+
+  <g font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" letter-spacing="1.6" fill="#475569">
+    <text x="48" y="44">AGENT CLIENTS</text>
+    <text x="340" y="44">INTERFACES</text>
+    <text x="630" y="44">CORE</text>
+    <text x="920" y="44">LOCAL STORE</text>
+  </g>
+
+  <g font-family="'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif">
+    <g>
+      <rect x="48" y="66" width="220" height="52" rx="12" fill="#ffffff" fill-opacity="0.035" stroke="#8b5cf6" stroke-opacity="0.32"/>
+      <text x="70" y="97" font-size="16" font-weight="600" fill="#e2e8f0">Claude Code</text>
+    </g>
+    <g>
+      <rect x="48" y="130" width="220" height="52" rx="12" fill="#ffffff" fill-opacity="0.035" stroke="#8b5cf6" stroke-opacity="0.32"/>
+      <text x="70" y="161" font-size="16" font-weight="600" fill="#e2e8f0">Cursor</text>
+    </g>
+    <g>
+      <rect x="48" y="194" width="220" height="52" rx="12" fill="#ffffff" fill-opacity="0.035" stroke="#8b5cf6" stroke-opacity="0.32"/>
+      <text x="70" y="225" font-size="16" font-weight="600" fill="#e2e8f0">Codex · any MCP client</text>
+    </g>
+    <g>
+      <rect x="48" y="300" width="220" height="52" rx="12" fill="#ffffff" fill-opacity="0.035" stroke="#60a5fa" stroke-opacity="0.32"/>
+      <text x="70" y="331" font-size="16" font-weight="600" fill="#e2e8f0">You · terminal</text>
+    </g>
+
+    <g>
+      <rect x="340" y="108" width="220" height="96" rx="14" fill="#8b5cf6" fill-opacity="0.09" stroke="#8b5cf6" stroke-opacity="0.5"/>
+      <text x="362" y="142" font-size="17" font-weight="700" fill="#f8fafc">MCP server</text>
+      <text x="362" y="166" font-size="13" fill="#a5a3c0" font-family="'JetBrains Mono', ui-monospace, monospace">avc mcp</text>
+      <text x="362" y="188" font-size="12.5" fill="#8b93a7">8 tools · agent-driven</text>
+    </g>
+    <g>
+      <rect x="340" y="288" width="220" height="76" rx="14" fill="#60a5fa" fill-opacity="0.09" stroke="#60a5fa" stroke-opacity="0.5"/>
+      <text x="362" y="320" font-size="17" font-weight="700" fill="#f8fafc">CLI</text>
+      <text x="362" y="344" font-size="13" fill="#9dbbe0" font-family="'JetBrains Mono', ui-monospace, monospace">avc save · rollback</text>
+    </g>
+
+    <g>
+      <rect x="630" y="108" width="220" height="256" rx="14" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.16"/>
+      <text x="652" y="142" font-size="17" font-weight="700" fill="#f8fafc">agentvc core</text>
+      <g font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" fill="#c4b5fd">
+        <text x="652" y="180">snapshot</text>
+        <text x="652" y="210">diff</text>
+        <text x="652" y="240">refs</text>
+        <text x="652" y="270">objects</text>
+      </g>
+      <text x="652" y="310" font-size="12.5" fill="#8b93a7">auto safety-checkpoint</text>
+      <text x="652" y="332" font-size="12.5" fill="#8b93a7">on every restore</text>
+    </g>
+
+    <g>
+      <rect x="920" y="108" width="232" height="256" rx="14" fill="#f97316" fill-opacity="0.07" stroke="#f97316" stroke-opacity="0.42"/>
+      <text x="942" y="142" font-size="17" font-weight="700" fill="#f8fafc">.avc/</text>
+      <g font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5">
+        <text x="942" y="180" fill="#fdba74">objects/</text>
+        <text x="942" y="200" fill="#64748b">sha-256 blobs + trees</text>
+        <text x="942" y="232" fill="#fdba74">checkpoints/</text>
+        <text x="942" y="252" fill="#64748b">parents · message · meta</text>
+        <text x="942" y="284" fill="#fdba74">refs/heads/</text>
+        <text x="942" y="304" fill="#64748b">branch tips</text>
+        <text x="942" y="336" fill="#fdba74">index.json</text>
+      </g>
+    </g>
+  </g>
+
+  <g stroke="#64748b" stroke-width="1.6" fill="none" marker-end="url(#arrow)" stroke-opacity="0.75">
+    <path d="M268 92 C 305 92 305 140 336 140"/>
+    <path d="M268 156 H 336"/>
+    <path d="M268 220 C 305 220 305 172 336 172"/>
+    <path d="M268 326 H 336"/>
+    <path d="M560 156 H 626"/>
+    <path d="M560 326 C 595 326 595 300 626 300"/>
+  </g>
+  <path d="M850 236 H 916" stroke="#64748b" stroke-width="1.6" fill="none" marker-end="url(#arrow)" marker-start="url(#arrowBack)" stroke-opacity="0.75"/>
+
+  <text x="48" y="440" font-family="'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#8b93a7">
+    No daemon. No cloud. No lock-in — delete <tspan font-family="'JetBrains Mono', ui-monospace, monospace" fill="#c4b5fd">.avc/</tspan> and your workspace is untouched.
+  </text>
+  <text x="1152" y="440" text-anchor="end" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" letter-spacing="1.4" fill="#475569">NINTECH · OPEN SOURCE</text>
+</svg>

@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-label="agentvc by Nintech">
+  <defs>
+    <linearGradient id="brand" x1="330" y1="330" x2="950" y2="210" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="0.5" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="markGrad" x1="15" y1="50" x2="49" y2="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="0.45" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="hairline" x1="0" y1="0" x2="1280" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa" stop-opacity="0"/>
+      <stop offset="0.35" stop-color="#60a5fa" stop-opacity="0.8"/>
+      <stop offset="0.65" stop-color="#8b5cf6" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#f97316" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glowViolet" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowBlue" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#4f7cff" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#4f7cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowOrange" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f97316" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#f97316" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.5" fill="#94a3b8" fill-opacity="0.06"/>
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="640" fill="#060509"/>
+  <rect width="1280" height="640" fill="url(#dots)"/>
+  <ellipse cx="1080" cy="90" rx="460" ry="320" fill="url(#glowViolet)"/>
+  <ellipse cx="150" cy="560" rx="440" ry="300" fill="url(#glowBlue)"/>
+  <ellipse cx="1180" cy="620" rx="320" ry="240" fill="url(#glowOrange)"/>
+
+  <g opacity="0.5" stroke-linecap="round" fill="none">
+    <path d="M120 470 H1160" stroke="#334155" stroke-width="2"/>
+    <path d="M400 470 C 450 470 460 412 510 412 H760" stroke="#8b5cf6" stroke-width="2" stroke-opacity="0.7"/>
+    <path d="M700 470 C 750 470 760 528 810 528 H1010" stroke="#f97316" stroke-width="2" stroke-opacity="0.6"/>
+    <g>
+      <circle cx="120" cy="470" r="6.5" fill="#060509" stroke="#60a5fa" stroke-width="2.5"/>
+      <circle cx="400" cy="470" r="6.5" fill="#060509" stroke="#60a5fa" stroke-width="2.5"/>
+      <circle cx="700" cy="470" r="6.5" fill="#060509" stroke="#60a5fa" stroke-width="2.5"/>
+      <circle cx="1160" cy="470" r="8" fill="#60a5fa"/>
+      <circle cx="760" cy="412" r="7" fill="#8b5cf6"/>
+      <circle cx="1010" cy="528" r="7" fill="#f97316"/>
+    </g>
+  </g>
+
+  <g transform="translate(566,74) scale(0.62)">
+    <path d="M15 50 L15 27 C15 20.2 17.4 19.11 22.5 23.6 L41.5 40.4 C46.6 44.89 49 43.8 49 37 L49 14"
+          fill="none" stroke="url(#markGrad)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="640" y="152" text-anchor="middle" font-family="'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif"
+        font-size="19" font-weight="700" letter-spacing="6" fill="#f8fafc">NINTECH</text>
+
+  <text x="640" y="330" text-anchor="middle" font-family="'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif"
+        font-size="132" font-weight="800" letter-spacing="-3" fill="url(#brand)">agentvc</text>
+
+  <text x="640" y="386" text-anchor="middle" font-family="'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif"
+        font-size="32" font-weight="500" fill="#e2e8f0">Version control for AI coding agents</text>
+
+  <g font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" letter-spacing="1.4">
+    <g>
+      <rect x="358" y="556" width="140" height="38" rx="19" fill="#ffffff" fill-opacity="0.05" stroke="#8b5cf6" stroke-opacity="0.4"/>
+      <text x="428" y="581" fill="#c4b5fd" text-anchor="middle">CHECKPOINT</text>
+    </g>
+    <g>
+      <rect x="512" y="556" width="104" height="38" rx="19" fill="#ffffff" fill-opacity="0.05" stroke="#60a5fa" stroke-opacity="0.4"/>
+      <text x="564" y="581" fill="#7cb8ff" text-anchor="middle">BRANCH</text>
+    </g>
+    <g>
+      <rect x="630" y="556" width="128" height="38" rx="19" fill="#ffffff" fill-opacity="0.05" stroke="#f97316" stroke-opacity="0.42"/>
+      <text x="694" y="581" fill="#fdba74" text-anchor="middle">ROLLBACK</text>
+    </g>
+    <g>
+      <rect x="772" y="556" width="150" height="38" rx="19" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.2"/>
+      <text x="847" y="581" fill="#f8fafc" text-anchor="middle">MCP-NATIVE</text>
+    </g>
+  </g>
+
+  <rect x="0" y="636" width="1280" height="4" fill="url(#hairline)"/>
+</svg>

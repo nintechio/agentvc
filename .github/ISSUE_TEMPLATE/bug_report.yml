@@ -1,0 +1,63 @@
+name: Bug report
+description: Something in agentvc behaves incorrectly
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping make agent workflows safer. If this is a **security**
+        issue or involves **lost work**, please follow [SECURITY.md](https://github.com/nintechio/agentvc/blob/main/SECURITY.md) instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. avc init
+        2. avc save -m "..."
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Which interface?
+      options:
+        - CLI (avc)
+        - MCP server (avc mcp)
+        - Library (import from "agentvc")
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: Agent client (if MCP)
+      placeholder: Claude Code 2.x / Cursor / Codex / other
+  - type: input
+    id: version
+    attributes:
+      label: agentvc version
+      placeholder: output of `avc --version`
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version and OS
+      placeholder: node 22.4.0 / macOS 15.1
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant output
+      description: Terminal output, error messages, or the contents of `.avc/index.json`.
+      render: shell

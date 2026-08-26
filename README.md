@@ -1,52 +1,76 @@
-# agentvc
+<div align="center">
 
-[![CI](https://github.com/nintechio/agentvc/actions/workflows/ci.yml/badge.svg)](https://github.com/nintechio/agentvc/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/agentvc.svg)](https://www.npmjs.com/package/agentvc)
-[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+<a href="https://nintech.io"><img src=".github/assets/banner.svg" alt="agentvc — Version control for AI coding agents" width="100%"></a>
 
-**Version control for AI coding agents.** Checkpoint, branch, diff, and roll back agent sessions mid-task — from the CLI or natively via MCP (Model Context Protocol).
+<p>
+  <a href="https://github.com/nintechio/agentvc/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/nintechio/agentvc/ci.yml?branch=main&label=CI&labelColor=060509&color=8b5cf6&style=flat-square" alt="CI"></a>
+  <a href="https://www.npmjs.com/package/agentvc"><img src="https://img.shields.io/npm/v/agentvc?label=npm&labelColor=060509&color=60a5fa&style=flat-square" alt="npm version"></a>
+  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-native-8b5cf6?labelColor=060509&style=flat-square" alt="MCP native"></a>
+  <a href="#requirements"><img src="https://img.shields.io/badge/node-%E2%89%A5%2020-60a5fa?labelColor=060509&style=flat-square" alt="Node >= 20"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-f97316?labelColor=060509&style=flat-square" alt="MIT license"></a>
+  <a href="https://nintech.io"><img src="https://img.shields.io/badge/built%20by-Nintech-f8fafc?labelColor=060509&style=flat-square" alt="Built by Nintech"></a>
+</p>
 
-Git was built for humans committing at human pace. Agents mutate your workspace at machine pace, take wrong turns, delete files, and go off the rails. `agentvc` gives every agent session a **time machine**: snapshot before risky moves, fork parallel attempts onto branches, and restore any previous state in milliseconds — with **zero data loss by design**.
+<p>
+  <b><a href="#quickstart">Quickstart</a></b> ·
+  <b><a href="#give-your-agent-a-time-machine">MCP setup</a></b> ·
+  <b><a href="#cli-reference">CLI</a></b> ·
+  <b><a href="#use-it-as-a-library">Library</a></b> ·
+  <b><a href="#how-it-works">Architecture</a></b> ·
+  <b><a href="#roadmap">Roadmap</a></b>
+</p>
 
-```
-$ avc status
-On branch main @ 3f9c2a1e8b04
- M src/auth.ts
- A src/auth.test.ts
+<p><i>Your agent just deleted the wrong files. Again.<br>Roll the whole workspace back to a known-good second — and keep the work it did after it.</i></p>
 
-$ avc save -m "auth working, pre-refactor"
-Saved 7d1e44b0c2aa on main (2 file changes)
-  "auth working, pre-refactor"
+</div>
 
-$ # ... agent refactors everything and breaks it ...
+---
 
-$ avc rollback HEAD^        # or just: avc rollback <id-prefix>
-Rolled back to 7d1e44b0c2aa (12 restored, 3 removed) — HEAD stays on main
-pre-rollback state saved as safety checkpoint 91ab77fe00d1
-```
+## Why agentvc
+
+Git was built for humans committing at human pace. AI agents mutate your workspace at machine pace: dozens of files per minute, wrong turns, half-finished refactors, deletions you never asked for. By the time you notice, `git stash` isn't going to save you.
+
+**agentvc gives every agent session a time machine.** It snapshots the entire workspace in milliseconds, forks parallel attempts onto branches, and restores any previous state instantly — with **zero data loss by design**.
+
+<div align="center">
+  <img src=".github/assets/demo.svg" alt="agentvc terminal demo: init, save, status, rollback, timeline" width="88%">
+</div>
+
+## Features
+
+|  | |
+|---|---|
+| **⏱ Instant checkpoints** | Snapshot every file with one command or one tool call. Content-addressed, deduplicated, milliseconds. |
+| **↩ Lossless rollback** | Every restore auto-saves your current state first. Rolling back is itself reversible. |
+| **⑃ Parallel attempts** | Branch the session, try approach B, compare, keep the winner. |
+| **🤖 MCP-native** | 8 tools so Claude Code, Cursor, and Codex checkpoint and recover *themselves*. |
+| **🔍 Real diffs** | See exactly what the agent touched between any two points in time. |
+| **🔒 Local & private** | Everything lives in `.avc/`. No daemon, no cloud, no telemetry. |
 
 ## Why not just git?
 
-| | git | agentvc |
+|  | git | agentvc |
 |---|---|---|
 | Designed for | human commits | machine-speed agent steps |
-| Staging / add -A dance | required | never — one command snapshots everything |
-| Rollback safety | checkout can destroy uncommitted work | auto safety-checkpoint before every restore |
-| Branch for "try another approach" | heavyweight, easy to tangle | one tool call, agents do it themselves |
-| Agent-native interface | none | first-class [MCP server](#give-your-agent-the-time-machine) + library |
-| Metadata per step | manual notes | structured JSON (`task`, `attempt`, tokens, model...) |
+| Staging dance | `add` / `commit` required | one command captures everything |
+| Rollback safety | `checkout` can destroy uncommitted work | auto safety-checkpoint before every restore |
+| "Try another approach" | heavyweight branching, easy to tangle | one tool call — agents do it themselves |
+| Agent interface | none | first-class MCP server + TypeScript API |
+| Per-step metadata | manual notes | structured JSON (`task`, `attempt`, model, tokens) |
 
-agentvc doesn't replace git for shipping code. It sits *underneath* the agent loop: cheap, safe, disposable history you can rewind freely without polluting git log.
+agentvc doesn't replace git for shipping code. It sits **underneath** the agent loop: cheap, disposable, rewindable history that never pollutes your `git log`.
+
+## Requirements
+
+Node.js **20 or newer**. No other runtime dependencies.
 
 ## Install
-
-Requires Node.js 20+.
 
 ```bash
 npm install -g agentvc
 ```
 
-Or use it without installing:
+Or run it without installing:
 
 ```bash
 npx agentvc init
@@ -56,32 +80,31 @@ npx agentvc init
 
 ```bash
 mkdir demo && cd demo
-avc init
+avc init                              # initialise .avc/
 
 echo "v1" > app.txt
-avc save -m "initial state"
+avc save -m "known good state"        # checkpoint everything
 
-echo "v2" > app.txt
-avc branch experiment          # fork a parallel attempt
-avc switch experiment
-echo "v2-experiment" > app.txt
-avc save -m "risky idea"
+echo "v2" > app.txt                   # ...agent goes wrong...
+avc status                            # see what changed
+avc rollback HEAD                     # instant undo — nothing lost
 
-avc timeline                   # see every attempt side by side
-avc switch main                # back to safety — dirty work is auto-saved first
-avc rollback HEAD              # restore files to last checkpoint anytime
-avc diff                       # what changed vs the last checkpoint?
+avc branch plan-b && avc switch plan-b   # fork a parallel attempt
+avc save -m "trying redis instead"
+avc timeline                          # every attempt, side by side
 ```
 
-## Give your agent the time machine
+## Give your agent a time machine
 
-Register the bundled MCP server with your coding agent once, and it can checkpoint and roll back itself:
+Register the bundled MCP server once and your agent can checkpoint and recover on its own.
+
+**Claude Code**
 
 ```bash
 claude mcp add agentvc -- avc mcp
 ```
 
-Or in `.mcp.json` / Cursor / Codex / any MCP client config:
+**Cursor · Codex · any MCP client** — add to `.mcp.json` (or see [`examples/mcp-config.json`](examples/mcp-config.json)):
 
 ```json
 {
@@ -91,9 +114,11 @@ Or in `.mcp.json` / Cursor / Codex / any MCP client config:
 }
 ```
 
-Set `AVC_ROOT` to pin the workspace root when the server shouldn't use its cwd.
+Set `AVC_ROOT=/path/to/project` if the server shouldn't use its working directory.
 
-Then teach your agent *when* to use it by adding this to `AGENTS.md` / `CLAUDE.md`:
+### Teach it when to checkpoint
+
+Drop this into your `AGENTS.md` / `CLAUDE.md` — it's the difference between a nice tool and a genuine safety net:
 
 ```markdown
 ## Session checkpoints (agentvc)
@@ -103,22 +128,40 @@ Then teach your agent *when* to use it by adding this to `AGENTS.md` / `CLAUDE.m
 - After reaching a working state, call `avc_save` again.
 - If an approach fails twice, call `avc_rollback` to the last good checkpoint
   and try a different plan — optionally on a new branch via `avc_branch`.
-- Never leave more than ~15 minutes of work unchecked.
+- Never leave more than ~15 minutes of work uncheckpointed.
 ```
 
 ### MCP tools
 
-| Tool | Purpose |
+| Tool | What the agent uses it for |
 |---|---|
-| `avc_save` | Snapshot the whole workspace (call before risky ops) |
-| `avc_status` | Unsaved changes vs last checkpoint |
-| `avc_log` | Recent checkpoints on current branch |
-| `avc_branch` / `avc_switch` | Fork alternative attempts; move between them |
-| `avc_rollback` | Restore files to any checkpoint (auto-safety-checkpointed) |
-| `avc_diff` | File-level changes between two points in time |
-| `avc_timeline` | All checkpoints across all branches |
+| `avc_save` | Snapshot the workspace before risky work or after success |
+| `avc_status` | Check what's changed since the last checkpoint |
+| `avc_log` | Review recent checkpoints on the current branch |
+| `avc_branch` | Fork a parallel attempt without losing the current one |
+| `avc_switch` | Move between attempts (auto-saves unsaved work first) |
+| `avc_rollback` | Restore all files to a known-good checkpoint |
+| `avc_diff` | Compare any two points in time |
+| `avc_timeline` | See every attempt across all branches |
 
-## Library usage
+## CLI reference
+
+| Command | Description |
+|---|---|
+| `avc init` | Initialise a repository in the current directory |
+| `avc save [-m msg] [--meta json]` | Checkpoint the whole workspace |
+| `avc status` | Show unsaved changes since the last checkpoint |
+| `avc log [-n N]` | List checkpoints on the current branch |
+| `avc branch [name] [start]` | Create or list branches |
+| `avc switch <branch>` | Switch branches, restoring files |
+| `avc rollback [ref]` | Restore files to a checkpoint (default `HEAD`) |
+| `avc diff [from] [to]` | Compare refs, or a ref against the working tree |
+| `avc timeline` | Every checkpoint across every branch |
+| `avc mcp` | Start the MCP stdio server |
+
+Refs accept `HEAD`, a branch name, a full checkpoint id, or any unique id prefix.
+
+## Use it as a library
 
 ```ts
 import { AgentVCS } from "agentvc";
@@ -126,62 +169,86 @@ import { AgentVCS } from "agentvc";
 const avc = new AgentVCS(projectRoot);
 await avc.ensureInit();
 
-const cp = await avc.save({ message: "before migration", meta: { task: "upgrade-db", step: 2 } });
+const cp = await avc.save({
+  message: "before db migration",
+  meta: { task: "upgrade-postgres", attempt: 2 },
+});
 
-if ((await avc.status()).clean) console.log("all checkpointed");
+const { clean, modified } = await avc.status();
+if (!clean) console.log("agent touched:", modified);
 
 await avc.branch("plan-b");
-await avc.switch("plan-b");      // via checkout()
-const broken = await avc.diff("HEAD", "work");
-await avc.rollback(cp.id);       // instant undo, nothing lost
+await avc.checkout("plan-b");
+
+await avc.rollback(cp.id);   // instant, lossless
 ```
+
+Fully typed. `AgentVCS`, `diffTrees`, and all result types are exported.
 
 ## How it works
 
-Content-addressed storage under `.avc/` — no daemon, no cloud, no lock-in:
+<div align="center">
+  <img src=".github/assets/architecture.svg" alt="agentvc architecture: MCP server and CLI over a content-addressed local store" width="100%">
+</div>
+
+Content-addressed storage, git's good idea without git's ceremony:
 
 ```
 .avc/
-├── objects/ab/c3ef...     blobs & trees, deduplicated by SHA-256
-├── checkpoints/           commit metadata (parents, tree, message, meta)
-├── refs/heads/main        branch tips
-└── index.json             id -> summary for fast prefix lookups
+├── objects/ab/c3ef…      blobs + trees, deduplicated by SHA-256
+├── checkpoints/          parents, tree, message, structured meta
+├── refs/heads/main       branch tips
+└── index.json            id → summary, for fast prefix lookups
 ```
 
-- Identical file content is stored exactly once, across all checkpoints and branches.
+- Identical file content is stored **once**, across every checkpoint and branch.
 - Unchanged files are never rewritten on restore.
-- Delete the `.avc/` folder and your workspace is untouched.
-- Respects your existing `.gitignore`.
+- Your existing `.gitignore` is respected; `.git/` and `node_modules/` are skipped.
+- Delete `.avc/` and your workspace is untouched.
 
-**Safety model:** every `rollback` and `switch` first snapshots unsaved changes into an automatic *safety checkpoint*. Rolling back is itself reversible — there is no way to lose work through agentvc.
-
-## CLI reference
-
-| Command | Description |
-|---|---|
-| `avc init` | Initialize a repository |
-| `avc save [-m msg] [--meta json]` | Checkpoint the workspace |
-| `avc status` | Show unsaved changes |
-| `avc log [-n N]` | Recent checkpoints |
-| `avc branch [name] [start]` | Create / list branches |
-| `avc switch <branch>` | Move to a branch (restores files) |
-| `avc rollback [ref]` | Restore files to a checkpoint |
-| `avc diff [from] [to]` | Compare refs or working tree |
-| `avc timeline` | Every checkpoint, every branch |
-| `avc mcp` | Start the MCP stdio server |
+> [!IMPORTANT]
+> **The safety guarantee.** Every `rollback` and `switch` snapshots your unsaved changes into an automatic *safety checkpoint* before touching a single file. Rolling back is reversible. There is no code path in agentvc that can lose your work.
 
 ## Roadmap
 
-- [ ] Line-level diffs in terminal (`avc diff -p`)
-- [ ] Merge branches (fast-forward today; 3-way next)
-- [ ] Session tagging & named milestones
-- [ ] Multi-agent coordination: two agents, same repo, different branches
-- [ ] Hook system: auto-save on file watcher / after each agent turn
-- [ ] Python SDK + MCP server parity
-- [ ] Remote backup of checkpoint store
+- [ ] Line-level diffs in the terminal (`avc diff -p`)
+- [ ] Branch merging (fast-forward today, 3-way next)
+- [ ] Auto-save hooks: on file watcher, or after each agent turn
+- [ ] Multi-agent coordination — two agents, one repo, separate branches
+- [ ] Named milestones and session tags
+- [ ] Python SDK with MCP parity
+- [ ] Optional encrypted remote backup of the checkpoint store
 
-Contributions very welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
+Ideas and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Contributing
+
+```bash
+git clone https://github.com/nintechio/agentvc.git
+cd agentvc && npm install
+npm run typecheck && npm test && npm run build
+```
+
+Bug reports, feature requests, and pull requests are all welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md). Security issues: see [SECURITY.md](SECURITY.md).
 
 ## License
 
-[MIT](LICENSE) © agentvc contributors
+[MIT](LICENSE) © [Nintech Ltd](https://nintech.io)
+
+<div align="center">
+<br>
+<a href="https://nintech.io"><img src=".github/assets/nintech-mark.svg" alt="Nintech" width="42"></a>
+
+**Built and maintained by [Nintech](https://nintech.io)**
+
+*The engineers who build it also run it.*
+
+Applied AI · resilient software engineering · managed hosting — UK & EU
+
+<a href="https://nintech.io">nintech.io</a> ·
+<a href="https://github.com/nintechio">GitHub</a> ·
+<a href="https://x.com/nintechio">X</a> ·
+<a href="https://www.youtube.com/@NinTechio">YouTube</a> ·
+<a href="mailto:admin@nintech.io">admin@nintech.io</a>
+
+</div>

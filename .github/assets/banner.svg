@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-label="agentvc — version control for AI coding agents, by Nintech">
+  <title>agentvc — Version control for AI coding agents</title>
+  <defs>
+    <linearGradient id="brand" x1="88" y1="215" x2="475" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="0.5" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="markGrad" x1="15" y1="50" x2="49" y2="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="0.45" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="hairline" x1="0" y1="0" x2="1280" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa" stop-opacity="0"/>
+      <stop offset="0.3" stop-color="#60a5fa" stop-opacity="0.7"/>
+      <stop offset="0.6" stop-color="#8b5cf6" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#f97316" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glowViolet" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.38"/>
+      <stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowBlue" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#4f7cff" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#4f7cff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowOrange" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f97316" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#f97316" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.5" fill="#94a3b8" fill-opacity="0.07"/>
+    </pattern>
+    <clipPath id="card">
+      <rect x="0" y="0" width="1280" height="400" rx="24"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#card)">
+    <rect width="1280" height="400" fill="#060509"/>
+    <rect width="1280" height="400" fill="url(#dots)"/>
+    <ellipse cx="1010" cy="120" rx="420" ry="300" fill="url(#glowViolet)"/>
+    <ellipse cx="180" cy="330" rx="420" ry="280" fill="url(#glowBlue)"/>
+    <ellipse cx="1180" cy="360" rx="300" ry="220" fill="url(#glowOrange)"/>
+
+    <g transform="translate(88,56) scale(0.5)">
+      <path d="M15 50 L15 27 C15 20.2 17.4 19.11 22.5 23.6 L41.5 40.4 C46.6 44.89 49 43.8 49 37 L49 14"
+            fill="none" stroke="url(#markGrad)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="128" y="86" font-family="'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+          font-size="17" font-weight="700" letter-spacing="4.5" fill="#f8fafc">NINTECH</text>
+    <text x="288" y="86" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace"
+          font-size="12.5" letter-spacing="1.6" fill="#64748b">· OPEN SOURCE</text>
+
+    <text x="86" y="212" font-family="'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+          font-size="96" font-weight="800" letter-spacing="-2" fill="url(#brand)">agentvc</text>
+
+    <text x="90" y="262" font-family="'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+          font-size="27" font-weight="500" fill="#e2e8f0">Version control for AI coding agents</text>
+    <text x="90" y="296" font-family="'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+          font-size="18" font-weight="400" fill="#8b93a7">Checkpoint before it breaks. Roll back when it does.</text>
+
+    <g font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" letter-spacing="1.2">
+      <g>
+        <rect x="88" y="326" width="118" height="32" rx="16" fill="#ffffff" fill-opacity="0.04" stroke="#8b5cf6" stroke-opacity="0.35"/>
+        <text x="147" y="347" fill="#c4b5fd" text-anchor="middle">CHECKPOINT</text>
+      </g>
+      <g>
+        <rect x="216" y="326" width="86" height="32" rx="16" fill="#ffffff" fill-opacity="0.04" stroke="#60a5fa" stroke-opacity="0.35"/>
+        <text x="259" y="347" fill="#7cb8ff" text-anchor="middle">BRANCH</text>
+      </g>
+      <g>
+        <rect x="312" y="326" width="66" height="32" rx="16" fill="#ffffff" fill-opacity="0.04" stroke="#60a5fa" stroke-opacity="0.35"/>
+        <text x="345" y="347" fill="#7cb8ff" text-anchor="middle">DIFF</text>
+      </g>
+      <g>
+        <rect x="388" y="326" width="106" height="32" rx="16" fill="#ffffff" fill-opacity="0.04" stroke="#f97316" stroke-opacity="0.38"/>
+        <text x="441" y="347" fill="#fdba74" text-anchor="middle">ROLLBACK</text>
+      </g>
+      <g>
+        <rect x="504" y="326" width="126" height="32" rx="16" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.18"/>
+        <text x="567" y="347" fill="#f8fafc" text-anchor="middle">MCP-NATIVE</text>
+      </g>
+    </g>
+
+    <g stroke-linecap="round" fill="none">
+      <path d="M760 214 H1196" stroke="#475569" stroke-width="2.5"/>
+      <path d="M868 214 C 908 214 916 152 956 152 H1100" stroke="#8b5cf6" stroke-width="2.5" stroke-opacity="0.85"/>
+      <path d="M976 214 C 1016 214 1024 282 1064 282 H1160" stroke="#f97316" stroke-width="2.5" stroke-opacity="0.75"/>
+      <path d="M1100 152 C 1140 152 1150 200 1196 208" stroke="#8b5cf6" stroke-width="2.5" stroke-opacity="0.5" stroke-dasharray="6 7"/>
+    </g>
+    <g>
+      <circle cx="760" cy="214" r="8.5" fill="#060509" stroke="#60a5fa" stroke-width="3"/>
+      <circle cx="868" cy="214" r="8.5" fill="#060509" stroke="#60a5fa" stroke-width="3"/>
+      <circle cx="976" cy="214" r="8.5" fill="#060509" stroke="#60a5fa" stroke-width="3"/>
+      <circle cx="1084" cy="214" r="8.5" fill="#060509" stroke="#60a5fa" stroke-width="3"/>
+      <circle cx="1196" cy="214" r="10" fill="#60a5fa"/>
+      <circle cx="956" cy="152" r="8.5" fill="#060509" stroke="#8b5cf6" stroke-width="3"/>
+      <circle cx="1100" cy="152" r="8.5" fill="#8b5cf6"/>
+      <circle cx="1064" cy="282" r="8.5" fill="#060509" stroke="#f97316" stroke-width="3"/>
+      <circle cx="1160" cy="282" r="8.5" fill="#f97316"/>
+    </g>
+    <g font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12.5" letter-spacing="0.5">
+      <text x="1214" y="219" fill="#7cb8ff">main</text>
+      <text x="1118" y="157" fill="#c4b5fd">attempt-a</text>
+      <text x="1178" y="287" fill="#fdba74">attempt-b</text>
+      <text x="760" y="330" fill="#475569">agent history, branched and reversible</text>
+    </g>
+
+    <rect x="0" y="396" width="1280" height="4" fill="url(#hairline)"/>
+  </g>
+</svg>
