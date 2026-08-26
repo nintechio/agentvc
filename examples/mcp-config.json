@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "agentvc": {
+      "command": "npx",
+      "args": ["-y", "agentvc", "mcp"],
+      "env": {
+        "AVC_ROOT": "/absolute/path/to/your/project"
+      }
+    }
+  }
+}
