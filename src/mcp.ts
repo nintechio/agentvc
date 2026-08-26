@@ -6,6 +6,7 @@ import path from "node:path";
 import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { AgentVCS } from "./core/repo.js";
+import { formatPatch, formatPatchSummary } from "./core/patch.js";
 
 export const VERSION = "0.1.0";
 
@@ -14,6 +15,8 @@ function rootDir(): string {
 }
 
 type ToolResult = { content: Array<{ type: "text"; text: string }>; isError?: boolean };
+
+const MAX_PATCH_OUTPUT_CHARS = 200_000;
 
 async function withRepo<T>(fn: (avc: AgentVCS) => Promise<T>): Promise<ToolResult> {
   try {
@@ -134,15 +137,51 @@ export async function startMcp(): Promise<void> {
     {
       title: "Diff two points",
       description:
-        "Show which files were added/modified/deleted between two points in time. Defaults compare the last checkpoint against the live working tree.",
+        "Show which files were added/modified/deleted between two points in time. Defaults compare the last checkpoint against the live working tree. Set patch=true to see the exact line-level changes (unified diff) — use it before deciding whether to roll back, when reviewing what an approach changed, or to recover a specific edit from an older checkpoint.",
       inputSchema: {
         from: z.string().optional().describe("Ref: 'HEAD', branch name, checkpoint id/prefix, or 'work'. Default 'HEAD'."),
         to: z.string().optional().describe("Ref or 'work'. Default 'work'."),
+        patch: z
+          .boolean()
+          .optional()
+          .describe("Include line-level unified diffs of each changed file instead of just the file list. Default false."),
+        context: z
+          .number()
+          .int()
+          .min(0)
+          .max(100)
+          .optional()
+          .describe("Lines of unchanged context around each change when patch=true. Default 3."),
       },
     },
     async (args) =>
       withRepo(async (avc) => {
-        const diffs = await avc.diff(args?.from ?? "HEAD", args?.to ?? "work");
+        const from = args?.from ?? "HEAD";
+        const to = args?.to ?? "work";
+        if (args?.patch) {
+          const patches = await avc.diffPatch(from, to, { context: args.context ?? 3 });
+          if (!patches.length) return "No differences.";
+          const chunks: string[] = [];
+          let used = 0;
+          let omitted = 0;
+          for (const p of patches) {
+            const text = formatPatch(p);
+            if (used + text.length > MAX_PATCH_OUTPUT_CHARS && chunks.length) {
+              omitted++;
+              continue;
+            }
+            chunks.push(text);
+            used += text.length;
+          }
+          if (omitted) {
+            chunks.push(
+              `(patch output truncated: ${omitted} more changed file(s) omitted — call avc_diff again with a narrower range or without patch)\n`
+            );
+          }
+          chunks.push(formatPatchSummary(patches));
+          return chunks.join("\n");
+        }
+        const diffs = await avc.diff(from, to);
         if (!diffs.length) return "No differences.";
         return diffs.map((d) => `${d.status === "added" ? "+" : d.status === "deleted" ? "-" : "~"} ${d.path}`).join("\n");
       })

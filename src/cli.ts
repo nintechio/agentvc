@@ -4,6 +4,14 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { AgentVCS, AvcError } from "./core/repo.js";
 import type { FileDiff } from "./core/diff.js";
+import {
+  formatHunkHeader,
+  formatHunkLine,
+  formatPatch,
+  formatPatchSummary,
+  patchHeader,
+} from "./core/patch.js";
+import type { FilePatch } from "./core/patch.js";
 
 const VERSION = "0.1.0";
 const COLORS = process.stdout.isTTY && !process.env.NO_COLOR;
@@ -53,6 +61,30 @@ function printDiffs(diffs: FileDiff[]): void {
     const mark =
       d.status === "added" ? green("A") : d.status === "deleted" ? red("D") : yellow("M");
     console.log(` ${mark} ${d.path}`);
+  }
+}
+
+function printPatch(p: FilePatch): void {
+  if (p.limit === "binary" || p.limit === "size") {
+    process.stdout.write(dim(formatPatch(p)));
+    return;
+  }
+  const header = patchHeader(p);
+  console.log(bold(`--- ${header.old}`));
+  console.log(bold(`+++ ${header.new}`));
+  if (p.limit === "complexity") {
+    console.log(dim("(too many changes for a line-level diff; shown as a whole-file replacement)"));
+  }
+  for (const h of p.hunks) {
+    console.log(cyan(formatHunkHeader(h)));
+    for (const l of h.lines) {
+      for (const line of formatHunkLine(l)) {
+        if (line.startsWith("\\")) console.log(dim(line));
+        else if (l.kind === "add") console.log(green(line));
+        else if (l.kind === "del") console.log(red(line));
+        else console.log(line);
+      }
+    }
   }
 }
 
@@ -199,8 +231,21 @@ program
   .description("compare two points in time (defaults: last checkpoint -> working tree)")
   .argument("[from]", "ref or 'work'")
   .argument("[to]", "ref or 'work'")
-  .action(async (from?: string, to?: string) => {
+  .option("-p, --patch", "show line-level unified diffs instead of a file list")
+  .option("-U, --unified <n>", "lines of context around each change (with --patch)", "3")
+  .action(async (from: string | undefined, to: string | undefined, opts: { patch?: boolean; unified: string }) => {
     const avc = await repo();
+    if (opts.patch) {
+      const context = Math.max(0, parseInt(opts.unified, 10) || 0);
+      const patches = await avc.diffPatch(from ?? "HEAD", to ?? "work", { context });
+      if (!patches.length) {
+        console.log(dim("no differences"));
+        return;
+      }
+      for (const p of patches) printPatch(p);
+      console.log(dim(`\n${formatPatchSummary(patches)}`));
+      return;
+    }
     const diffs = await avc.diff(from ?? "HEAD", to ?? "work");
     if (!diffs.length) {
       console.log(dim("no differences"));
