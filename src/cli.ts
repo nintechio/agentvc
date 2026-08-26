@@ -3,6 +3,9 @@ import { Command } from "commander";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { AgentVCS, AvcError } from "./core/repo.js";
+import { watchWorkspace, DEFAULT_WATCH_DEBOUNCE_MS } from "./core/watch.js";
+import { claudeHookSettings, mergeHookSettings } from "./hooks.js";
+import type { HookSettings } from "./hooks.js";
 import { packageVersion } from "./util/version.js";
 import type { FileDiff } from "./core/diff.js";
 import {
@@ -110,7 +113,8 @@ program
   .description("create a checkpoint of the entire workspace")
   .option("-m, --message <msg>", "checkpoint message")
   .option("--meta <json>", "structured metadata, e.g. '{\"task\":\"fix-auth\",\"step\":3}'")
-  .action(async (opts: { message?: string; meta?: string }) => {
+  .option("--auto", "only checkpoint if something changed; mark it automatic (for hooks and scripts)")
+  .action(async (opts: { message?: string; meta?: string; auto?: boolean }) => {
     const avc = await repo();
     let meta: Record<string, unknown> = {};
     if (opts.meta) {
@@ -121,8 +125,15 @@ program
       }
     }
     const before = await avc.status();
+    if (opts.auto) {
+      if (before.clean) {
+        console.log(dim("nothing to save — workspace matches the last checkpoint"));
+        return;
+      }
+      meta = { ...meta, auto: true, trigger: meta.trigger ?? "hook" };
+    }
     const cp = await avc.save({
-      message: opts.message ?? `checkpoint @ ${new Date().toLocaleString()}`,
+      message: opts.message ?? (opts.auto ? "auto: checkpoint" : `checkpoint @ ${new Date().toLocaleString()}`),
       meta,
     });
     const changes = before.added.length + before.modified.length + before.deleted.length;
@@ -156,12 +167,74 @@ program
   });
 
 program
+  .command("watch")
+  .description("keep running and checkpoint automatically whenever files stop changing")
+  .option("-d, --debounce <ms>", "quiet period before an auto-checkpoint", String(DEFAULT_WATCH_DEBOUNCE_MS))
+  .option("-m, --message <msg>", "message for auto-checkpoints", "auto: workspace changed")
+  .action(async (opts: { debounce: string; message: string }) => {
+    const avc = await repo();
+    const debounceMs = Math.max(100, parseInt(opts.debounce, 10) || DEFAULT_WATCH_DEBOUNCE_MS);
+    const watcher = await watchWorkspace(avc, {
+      debounceMs,
+      message: opts.message,
+      onCheckpoint: (cp) => console.log(`${green("Saved")} ${bold(cp.id)} on ${cyan(cp.branch)} ${dim(new Date(cp.timestamp).toLocaleTimeString())}`),
+      onError: (err) => console.error(red(`watch error: ${err instanceof Error ? err.message : String(err)}`)),
+    });
+    console.log(`${cyan("Watching")} ${dim(avc.root)} — auto-checkpoint after ${debounceMs}ms of quiet ${dim("(Ctrl-C to stop)")}`);
+    const stop = async (): Promise<void> => {
+      watcher.close();
+      const cp = await avc.saveIfDirty({ message: opts.message, meta: { auto: true, trigger: "watch" } }).catch(() => null);
+      if (cp) console.log(`${green("Saved")} ${bold(cp.id)} ${dim("(final)")}`);
+      process.exit(0);
+    };
+    process.on("SIGINT", () => void stop());
+    process.on("SIGTERM", () => void stop());
+    await new Promise(() => undefined);
+  });
+
+const hook = program.command("hook").description("wire automatic checkpoints into an agent's hook system");
+
+hook
+  .command("claude")
+  .description("print (or install) Claude Code hooks that checkpoint after every agent turn")
+  .option("--install", "merge into .claude/settings.json in the current project instead of printing")
+  .option("--on-edit", "also checkpoint after every Edit/Write/MultiEdit tool call")
+  .action(async (opts: { install?: boolean; onEdit?: boolean }) => {
+    const addition = claudeHookSettings({ onEdit: opts.onEdit ?? false });
+    if (!opts.install) {
+      console.log(JSON.stringify(addition, null, 2));
+      console.error(dim("\nAdd this to .claude/settings.json, or re-run with --install to merge it automatically."));
+      return;
+    }
+    const settingsPath = path.join(process.cwd(), ".claude", "settings.json");
+    let existing: HookSettings = {};
+    try {
+      existing = JSON.parse(await fs.readFile(settingsPath, "utf8")) as HookSettings;
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
+        throw new AvcError(`${settingsPath} exists but is not valid JSON — fix it or add the hook by hand`);
+      }
+    }
+    const merged = mergeHookSettings(existing, addition);
+    if (JSON.stringify(merged) === JSON.stringify(existing)) {
+      console.log(dim(`hooks already present in ${settingsPath}`));
+      return;
+    }
+    await fs.mkdir(path.dirname(settingsPath), { recursive: true });
+    await fs.writeFile(settingsPath, `${JSON.stringify(merged, null, 2)}\n`);
+    console.log(`${green("Installed")} agentvc hooks into ${dim(settingsPath)}`);
+    console.log(dim("Claude Code will now run 'avc save --auto' after every turn. Make sure 'avc' is on PATH (npm install -g agentvc)."));
+  });
+
+program
   .command("log")
   .description("list checkpoints on the current branch")
   .option("-n, --limit <n>", "number of checkpoints", "20")
-  .action(async (opts: { limit: string }) => {
+  .option("--no-auto", "hide automatic checkpoints (watch, hooks, safety)")
+  .action(async (opts: { limit: string; auto: boolean }) => {
     const avc = await repo();
-    const cps = await avc.log(parseInt(opts.limit, 10) || 20);
+    const all = await avc.log(parseInt(opts.limit, 10) || 20);
+    const cps = opts.auto ? all : all.filter((cp) => cp.meta.auto !== true);
     if (!cps.length) {
       console.log(dim("no checkpoints yet — run 'avc save -m \"...\"'"));
       return;

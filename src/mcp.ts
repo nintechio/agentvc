@@ -58,11 +58,17 @@ export async function startMcp(): Promise<void> {
       inputSchema: {
         message: z.string().describe("Short description of what is true right now"),
         meta: z.record(z.string(), z.unknown()).optional().describe("Structured metadata, e.g. {\"task\":\"fix-auth\",\"attempt\":2}"),
+        only_if_changed: z
+          .boolean()
+          .optional()
+          .describe("Skip silently when nothing changed since the last checkpoint. Use this for routine end-of-turn checkpoints so history stays free of duplicates."),
       },
     },
     async (args) =>
       withRepo(async (avc) => {
-        const cp = await avc.save(args as { message: string; meta?: Record<string, unknown> });
+        const opts = { message: args.message, meta: args.meta };
+        const cp = args.only_if_changed ? await avc.saveIfDirty(opts) : await avc.save(opts);
+        if (!cp) return "Nothing to save — the workspace already matches the last checkpoint.";
         return `Checkpoint ${cp.id} saved on branch '${cp.branch}': ${cp.message}`;
       })
   );
