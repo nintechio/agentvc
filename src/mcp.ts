@@ -6,9 +6,10 @@ import path from "node:path";
 import { realpathSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { AgentVCS } from "./core/repo.js";
+import { packageVersion } from "./util/version.js";
 import { formatPatch, formatPatchSummary } from "./core/patch.js";
 
-export const VERSION = "0.1.0";
+export const VERSION = packageVersion();
 
 function rootDir(): string {
   return process.env.AVC_ROOT ? path.resolve(process.env.AVC_ROOT) : process.cwd();
