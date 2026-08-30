@@ -1,0 +1,45 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nintechio/changefence/main/policy.schema.json",
+  "max_files": 25,
+  "max_additions": 3000,
+  "max_deletions": 2500,
+  "max_lines_per_file": 1200,
+  "forbidden": [
+    "dist/**",
+    "coverage/**",
+    "*.pem",
+    "*.key",
+    ".env"
+  ],
+  "protected": [
+    ".changefence.json",
+    ".github/workflows/**",
+    ".github/dependabot.yml",
+    "package.json",
+    "package-lock.json",
+    "SECURITY.md"
+  ],
+  "source_patterns": [
+    "src/**"
+  ],
+  "test_patterns": [
+    "test/**"
+  ],
+  "require_tests_for_source": true,
+  "allow_dependency_changes": false,
+  "allow_binary_changes": false,
+  "zones": [
+    {
+      "name": "release-surface",
+      "patterns": [
+        ".github/workflows/release.yml",
+        "package.json",
+        "package-lock.json"
+      ],
+      "max_files": 3,
+      "max_additions": 400,
+      "max_deletions": 250,
+      "max_lines_per_file": 300
+    }
+  ]
+}
